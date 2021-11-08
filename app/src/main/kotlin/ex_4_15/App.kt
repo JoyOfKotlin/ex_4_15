@@ -3,13 +3,55 @@
  */
 package ex_4_15
 
+import java.math.BigInteger
+
+fun <T> List<T>.head(): T =
+        if (this.isEmpty())
+            throw IllegalArgumentException("head called on empty list")
+        else
+            this[0]
+
+fun <T> List<T>.tail(): List<T> =
+        if (this.isEmpty())
+            throw IllegalArgumentException("tail called on empty list")
+        else
+            this.drop(1)
+
+
+
+fun <T> makeString(list: List<T>, delim: String): String {
+    tailrec fun makeString_(list: List<T>, acc: String): String =
+		when {
+			list.isEmpty() -> acc
+			acc.isEmpty() -> makeString_(list.tail(), "${list.head()}")
+			else -> makeString_(list.tail(), "$acc$delim${list.head()}")
+		}
+	return makeString_(list, "")
+}
+
+
+
+
+
+fun fibo(number: Int): String {
+    tailrec fun fibo(acc: List<BigInteger>, nminus1: BigInteger, nminus2: BigInteger, n: BigInteger): List<BigInteger> =
+        when (n) {
+            BigInteger.ZERO -> acc
+            BigInteger.ONE -> acc + (nminus1 + nminus2)
+            else -> fibo(acc + (nminus1 + nminus2), nminus1+nminus2, nminus1, n - BigInteger.ONE)
+        }
+    val list = fibo(listOf(), BigInteger.ONE, BigInteger.ZERO, BigInteger.valueOf(number.toLong()))
+    return makeString(list, ", ")
+}
+
 class App {
     val greeting: String
         get() {
-            return "Hello World!"
+            return "package ex_4_15"
         }
 }
 
 fun main() {
     println(App().greeting)
+	println(fibo(10))
 }
